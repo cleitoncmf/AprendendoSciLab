@@ -21,4 +21,4 @@ Este script mostra como trabalhar com funções de transferência impróprias. L
 
 
 
-![Resposta em Frequência da FT Imprópria](.\figs/bode_FT_impropria.png)
+![Resposta em Frequência da FT Imprópria](./figs/bode_FT_impropria.png)
