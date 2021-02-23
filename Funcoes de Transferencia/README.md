@@ -54,7 +54,6 @@ No script, fiz algo como isso com alguns valores aleatórios
 // definido da pg 26, depois da eq (3.13) da Tese do Paulo
 eta_c = sqrt(j*w*mu_0*mu_c/ro_c)
 
-
 // cotangente da eq 3.14
 // Esta é uma resposta em frequência numérica
 Z1_ctg = coth(eta_c*(r1-r0))
