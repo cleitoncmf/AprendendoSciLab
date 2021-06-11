@@ -33,7 +33,7 @@ Mag_num_Z1_ctg = 20*log10(abs(Z1_ctg))
 
 
 // Obtenção de uma função de transferência aproximada
-FT_5 = frep2tf(f,Z1_ctg,5) // FT com grau 5
+FT_5 = frep2tf(f,Z1_ctg,2) // FT com grau 5
 FT_10 = frep2tf(f,Z1_ctg,10) // FT com grau 5
 
 
@@ -41,4 +41,4 @@ FT_10 = frep2tf(f,Z1_ctg,10) // FT com grau 5
 // Diagrama de Bode
 bode([FT_5;FT_10],1,1e3)
 plot(f,Mag_num_Z1_ctg,'r')
-legend(['FT_5';'FT_10';'Original'])
+legend(['FT_2';'FT_10';'Original'])
