@@ -233,11 +233,122 @@ $$
 -------------------------------------------------
 -------------------------------------------------
 -->
-## Primeira abordagem: utilizando apenas o SciLab 
+## Matrix de Parãmetros Transversais
+
+Na equação (3.62) de [1], é definido a matriz $\mathbf{P}$ de coeficientes dos pot~encias de Maxwell:
+
+$$
+\mathbf{P} = \mathbf{P}_i + \mathbf{P}_p + \mathbf{P}_c + \mathbf{P}_0
+$$
+
+
+Como explicado na página 44, a matriz $\mathbf{P}_p$ e $\mathbf{P}_c$ não são necessárias para o nosso caso (só se aplicam para cabos *Pipe-Type*). Além disso, a matriz $\mathbf{P}_0$ também não se aplica ao nosso caso (só é considerada em sitemas aérios).
+
+
+A idéia é que com a matriz $\mathbf{P}$ é possível definir de forma fácil a admitância $\mathbf{Y}$ mostrada no circuito da figura anterior. Ou seja:
+
+$$
+\mathbf{Y} =
+j \omega \mathbf{P}^{-1} = s \mathbf{P}^{-1} =
+\frac{s}{s+\omega_p} \mathbf{P}^{-1}  
+$$
+
+Observe que inclui um polo em alta frequência na definição de $\mathbf{Y}$ para tornar a função de trasnferência própria.
 
 
 
 
+
+
+<!-- 
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-->
+## Definições
+
+Daqui por diante vou utilizar a seguintes definições:
+
+
+$$
+\mathbf{Z} =
+\begin{bmatrix}
+    Z_{11} & Z_{12} & Z_{13} & Z_{14} & Z_{15} & Z_{16}\\
+    Z_{21} & Z_{22} & Z_{23} & Z_{24} & Z_{25} & Z_{26}\\
+    Z_{31} & Z_{32} & Z_{33} & Z_{34} & Z_{35} & Z_{36}\\
+    Z_{41} & Z_{42} & Z_{43} & Z_{44} & Z_{45} & Z_{46}\\
+    Z_{51} & Z_{52} & Z_{53} & Z_{54} & Z_{55} & Z_{56}\\
+    Z_{61} & Z_{62} & Z_{63} & Z_{64} & Z_{65} & Z_{66}\\
+\end{bmatrix}
+$$
+
+
+$$
+\mathbf{Y} =
+\begin{bmatrix}
+    Y_{11} & Y_{12} & Y_{13} & Y_{14} & Y_{15} & Y_{16}\\
+    Y_{21} & Y_{22} & Y_{23} & Y_{24} & Y_{25} & Y_{26}\\
+    Y_{31} & Y_{32} & Y_{33} & Y_{34} & Y_{35} & Y_{36}\\
+    Y_{41} & Y_{42} & Y_{43} & Y_{44} & Y_{45} & Y_{46}\\
+    Y_{51} & Y_{52} & Y_{53} & Y_{54} & Y_{55} & Y_{56}\\
+    Y_{61} & Y_{62} & Y_{63} & Y_{64} & Y_{65} & Y_{66}\\
+\end{bmatrix}
+$$
+
+
+
+**Muito Importante:** Usei $Z_{11}$, $Z_{12}$, etc para facilita a notação. Ou seja, elês não tem relação com os elementos de mesmo nome encontrados em $\mathbf{Z}_{ext}$.
+
+
+<!-- 
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-->
+## Dados genéricos
+
+Para realização do meu teste, vou definir valores genéricos para $Z_{11} \dots Z_{66}$ e $Y_{11} \dots Y_{66}$. 
+
+<!-- 
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
+-->
+## Processamento preliminar
+
+
+Para simular o cabo, precisamos equacionar o circuito da figura seguinte:
+
+
+<p align="center">
+<img src="./figuras/LT_aberta.svg">
+</p>
+
+
+Podemos escrever estas duas equações:
+
+$$
+\mathbf{V}_{in} - \mathbf{Z} \mathbf{I}_{L} = \mathbf{V}_o
+$$
+
+
+$$
+\mathbf{I}_{T} = \mathbf{Y} \mathbf{V}_{o} 
+$$
+
+
+Neste caso, a LT não está alimentando nenhuma carga. Assim, $\mathbf{I}_{T} = \mathbf{I}_{L}$. Como desevamos obter $\mathbf{V}_{o}$ em função de $\mathbf{V}_{in}$, devemos combinar estas duas equações:
+
+
+$$
+\mathbf{V}_{in} - \mathbf{Z} \mathbf{Y} \mathbf{V}_{o}  = \mathbf{V}_o
+$$
 
 
 <!-- 
