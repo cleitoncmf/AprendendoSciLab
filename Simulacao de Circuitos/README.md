@@ -362,9 +362,29 @@ $$
 
 
 
+Neste caso, podemos fazer o seguinte caminho:
+
+$$
+\mathbf{V}_{in} - \mathbf{Z} \mathbf{Y} \mathbf{V}_{o}  = \mathbf{V}_o
+$$
+
+$$
+\mathbf{V}_{in} = \mathbf{V}_o + \mathbf{Z} \mathbf{Y} \mathbf{V}_{o}
+$$
 
 
+$$
+\mathbf{V}_{in} = \left(\mathbf{I} + \mathbf{Z} \mathbf{Y} \right) \mathbf{V}_{o}
+$$
 
+
+$$
+\mathbf{V}_{o} = 
+\left(\mathbf{I} + \mathbf{Z} \mathbf{Y} \right)^{-1}
+\mathbf{V}_{in}
+$$
+
+onde $\mathbf{I}$ é uma matriz identidade $6 \times 6$.
 
 
 <!-- 
@@ -376,8 +396,20 @@ $$
 -->
 ## Segunda abordagem: utilizando o XCOS
 
+Considere a equação matrical obtida anteriormente:
+
+$$
+\mathbf{V}_{in} - \mathbf{Z} \mathbf{Y} \mathbf{V}_{o}  = \mathbf{V}_o
+$$
+
+Ela pode ser implementada, seguindo uma abordagem de diagramas de blocos, da seguinte forma:
 
 
+<p align="center">
+<img src="./figuras/Diagrama_blocos.svg">
+</p>
+
+Infelizmente o XCOS, deferentemente do SIMULINK, não tem suporte a implementação matricial/vetorial. Sendo assim, temos fazer o diagrama de bloco incluindo cada um dos elementos da matrix. Sendo assim:
 
 
 

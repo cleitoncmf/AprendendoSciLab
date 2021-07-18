@@ -14,6 +14,8 @@ s=poly(0,'s')
 zp = 100*s/(s +1000);
 yp = 10*s/(s +1000);
 
+zpteste = s^2+10*s+5;
+
 
 // Conversão para Laplace
 zs = syslin('c',zp)
@@ -62,6 +64,9 @@ Z63 = zs
 Z64 = zs
 Z65 = zs
 Z66 = zs
+
+
+teste = 32;
 
 
 
