@@ -302,16 +302,7 @@ $$
 **Muito Importante:** Usei $Z_{11}$, $Z_{12}$, etc para facilita a notação. Ou seja, elês não tem relação com os elementos de mesmo nome encontrados em $\mathbf{Z}_{ext}$.
 
 
-<!-- 
--------------------------------------------------
--------------------------------------------------
--------------------------------------------------
--------------------------------------------------
--------------------------------------------------
--->
-## Dados genéricos
-
-Para realização do meu teste, vou definir valores genéricos para $Z_{11} \dots Z_{66}$ e $Y_{11} \dots Y_{66}$. 
+Para realização do meu teste, vou definir valores genéricos para $Z_{11} \dots Z_{66}$ e $Y_{11} \dots Y_{66}$. A idéia é substituir cada um destes pelas componentes calculadas de cada uma das matrizes.
 
 <!-- 
 -------------------------------------------------
@@ -387,6 +378,38 @@ $$
 onde $\mathbf{I}$ é uma matriz identidade $6 \times 6$.
 
 
+No nosso caso, $\mathbf{Z}$ e $\mathbf{Y}$ são matrizes de transferência. Para resposa a entrada senoidas, teremos as seguintes componentes para $\mathbf{V}_{in}$ (assumindo que a blindagem está aterrada):
+
+$$
+\mathbf{V}_{in} = 
+\begin{bmatrix}
+V_P \left(\frac{\omega}{s^2 + \omega^2}\right)\\
+0\\
+V_P \left(\frac{\omega}{s^2 + \omega^2}\right) e^{-\frac{2\pi}{3}s}\\
+0\\
+V_P \left(\frac{\omega}{s^2 + \omega^2}\right) e^{\frac{2\pi}{3}s}\\
+0\\
+\end{bmatrix} 
+$$
+
+onde $V_P \left(\frac{\omega}{s^2 + \omega^2}\right)$ é a representação no domínio de Laplace de uma senoide de amplitude $V_P$ e frequencia angular $\omega$. Os termos $e^{\pm {2\pi}s/3}$ representam as defasagens das fases B e C.
+
+Para obter a responta no tempo, teriamos que fazer:
+
+$$
+\mathbf{V}_{o}(t) = \mathcal{L}^{-1}
+\bigg\{
+\left(\mathbf{I} + \mathbf{Z} \mathbf{Y} \right)^{-1}
+\mathbf{V}_{in}
+\bigg\} 
+$$
+
+
+Embora esta pareça uma solução rápida, exitem dois problemas que a tornam mais difícil:
+* Inversão de matrizes de trasnferência sempre geram erros numéricos. Às vezes estes erros não causam grandes problemas, mas outras vezes eles invalidam por completo o resultado.
+* O Scilab não possui função para fazer transformada inversa de Laplace.
+
+
 <!-- 
 -------------------------------------------------
 -------------------------------------------------
@@ -409,12 +432,70 @@ Ela pode ser implementada, seguindo uma abordagem de diagramas de blocos, da seg
 <img src="./figuras/Diagrama_blocos.svg">
 </p>
 
-Infelizmente o XCOS, deferentemente do SIMULINK, não tem suporte a implementação matricial/vetorial. Sendo assim, temos fazer o diagrama de bloco incluindo cada um dos elementos da matrix. Sendo assim:
+Infelizmente, deferentemente do SIMULINK, o XCOS não tem suporte a implementação de matrizes de trasnferência. Sendo assim, temos que fazer o diagrama de bloco incluindo cada um dos elementos da matrix. A próxima figura mostra uma possível implementação no XCOS com esta abordagem.
 
 
+<p align="center">
+<img src="./figuras/Simulacao_cabo.svg">
+</p>
+
+Neste circuito, as seis linhas de cada matrix ($\mathbf{Z}$ e $\mathbf{Y}$) são representadas por blocos <code>SUPER_F</code>, que são encontrados dentro do grupo <code>Funções definidas pelo usuário</code> na paleta de componentes do XCOS. Ovserve que o vetor das tensões de entrada $\mathbf{V}_{in}$ é formado através da combinação de seis fontes e um multiplexador (MUX). A saída deste multiplexador é um sinal vetorial com seis componentes. O mesmo acontece com os sinais de entrada e de saída do somador da figura. Alguns multiplexadores (une as componentes de um vetor) e demultiplexadores (separa as componentes de um verot) foram usados no circuito para evitar a embolação de fios. Os blocos que representam as linhas das matrizes possuem estrutura igual a da figura seguinte.
 
 
+<p align="center">
+<img src="./figuras/sub_circuit.svg">
+</p>
 
+Este bloco esta, simplemente, representando as operações matriciais, linhas por linha. Ou seja, o bloco **Linha 1 de Y** reproduz a seguinte equação:
+
+$$
+I_{T,An} =
+Y_{11} V_{o,An} +
+Y_{12} V_{o,Ab} +
+Y_{13} V_{o,Bn} + 
+Y_{14} V_{o,Bb} +
+Y_{15} V_{o,Cn} +
+Y_{16} V_{o,Cb}
+$$
+
+Sendo que $Y_{11}$ é a função de trasnferência (FT) que deve ser configurada no primeiro bloco de cima para baixo, $Y_{12}$ no segundo, $Y_{13}$ no terceiro e assim por diante.
+
+Teremos a seguinte equação para o bloco **Linha 2 de Y**:
+
+$$
+I_{T,Ab} =
+Y_{21} V_{o,An} +
+Y_{22} V_{o,Ab} +
+Y_{23} V_{o,Bn} + 
+Y_{24} V_{o,Bb} +
+Y_{25} V_{o,Cn} +
+Y_{26} V_{o,Cb}
+$$
+
+A lógica se reprete para todas as linhas de  $\mathbf{Y}$ e também para todas as linhas de  $\mathbf{Z}$. 
+
+
+Tive problemas com os <code>scopes</code>, então decidi exportar as variáveis desejadas para o workspace. Isso é feito com o uso dos blocos <code>TOWS_c</code>, encontrados na paleta <code>Receptores</code> do XCOS. É possível definir neles o nome de uma variável e a quatidades de pontos para armazenar. Cada uma das variáveis tem dois campos, um com o tempo e outro com o valor da variável. O pedaço de código a seguir mostra como plotar os gráficos após a simulação do XCOS:
+
+
+```matlab
+t1 = Vo_An.time
+vo_An = Vo_An.values
+
+t2 = Vo_Bn.time
+vo_Bn = Vo_Bn.values
+
+t3 = Vo_Cn.time
+vo_Cn = Vo_Cn.values
+
+plot(t1,vo_An,t2,vo_Bn,t3,vo_Cn)
+```
+
+O resultado é mostrado na próxima figura:
+
+<p align="center">
+<img src="./figuras/graph_teste_0.svg">
+</p>
 
 <!-- 
 -------------------------------------------------
